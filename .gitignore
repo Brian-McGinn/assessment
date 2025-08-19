@@ -1,1 +1,4 @@
 venv/
+section-2/chroma_vectors
+section-2/.ipynb_checkpoints/
+section-2/docs/chroma.sqlite3
