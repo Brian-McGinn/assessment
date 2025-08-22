@@ -1,3 +1,22 @@
+# Scenario
+
+A customer in the legal-tech industry wants an AI assistant to summarize contracts,
+highlighting risks and obligations.
+
+# Tasks
+
+Write two prompt variants:
+A system prompt that sets the assistant’s role and tone.
+A user prompt template that will be dynamically filled with contract text.
+Explain how you would test these prompts for factual accuracy and consistency.
+Suggest one approach to grounding the model’s responses using external data.
+
+# Deliverable
+
+Your prompt text.
+Testing methodology.
+Grounding approach (brief explanation).
+
 # system_prompt
 
 The system prompt is used to set guidelines for how the LLM should behave. I used a role based prompt to shape the tone of the LLM's responses. I also added guidelines when the LLM is unable to answer to prevent hallucinations.
