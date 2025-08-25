@@ -25,31 +25,44 @@ Trade-off analysis.
 
 ## Technology  Stack 
 
-- AWS
-    - Amazon Elastic Kubernetes Service
-    - Amazon API Gateway
-    - Istio
-- ReactJS frontend with FastAPI backend
-- Pinecone (for EHR and diagnostic data)
-- prompt builder (api to build out the prompts using the retriever service and pre defined system and user prompts)
-- LLM (local llm fine tuned on medical data)
-- retriever for medical diagnosis and EHR notes
-    - guardrails to filter out PHI
-    - guardrails for HIPAA compliance
-    - metadata
-    - rerank for large data
-- Prometheus for telemetry
-- CloudTrail, GuardDuty, and Langsmith for monitoring services
+- **AWS Cloud Infrastructure**
+    - **Amazon Elastic Kubernetes Service (EKS):** Orchestrates containerized microservices for scalability, high availability, and secure workload isolation. Hosts backend APIs, LLM inference, and retrieval services.
+    - **Amazon API Gateway:** Provides a secure, scalable entry point for all API requests from the frontend, enabling authentication, throttling, and monitoring.
+    - **Istio Service Mesh:** Manages secure service-to-service communication, enforces policies, and provides observability for microservices within the Kubernetes cluster.
+- **Frontend & Backend**
+    - **ReactJS Frontend:** Delivers a responsive, user-friendly interface for doctors to interact with the assistant, view patient summaries, and input symptoms.
+    - **FastAPI Backend:** Handles business logic, orchestrates calls to the retriever, LLM, and prompt builder, and enforces security and compliance checks.
+- **Vector Database**
+    - **Pinecone:** Stores and indexes EHR notes and diagnostic data as vector embeddings for fast, semantic search and retrieval. Ensures data is encrypted and remains within the client’s cloud environment.
+- **Prompt Builder Service**
+    - **Prompt Builder API:** Dynamically constructs prompts for the LLM by combining retrieved EHR data, predefined system instructions, and user input, ensuring contextually relevant and compliant queries.
+- **Large Language Model (LLM)**
+    - **Local LLM (Fine-tuned on Medical Data):** Runs within the client’s secure cloud, trained on de-identified medical datasets to generate accurate, domain-specific summaries and diagnostic suggestions. No PHI leaves the environment.
+- **Retriever Service**
+    - **Medical Retriever:** Searches EHR notes and medical literature for relevant information. Integrates:
+        - **Guardrails to filter out PHI:** Ensures no protected health information is exposed to the LLM or external systems.
+        - **Guardrails for HIPAA compliance:** Enforces data handling and access policies to meet regulatory requirements.
+        - **Metadata Handling:** Attaches provenance and context to retrieved data for traceability.
+        - **Rerank for Large Data:** Prioritizes the most relevant results when dealing with extensive patient histories or literature.
+- **Monitoring & Observability**
+    - **Prometheus:** Collects and visualizes metrics from all system components for real-time health monitoring and alerting.
+    - **CloudTrail:** Logs all API calls and user actions for auditability and compliance tracking.
+    - **GuardDuty:** Continuously monitors for security threats and anomalous activity within the AWS environment.
+    - **Langsmith:** Tracks LLM performance, prompt effectiveness, and error rates to support ongoing model improvement and compliance reporting.
 
 ## Trade-Off Analysis
 
-- Accuracy vs Latency
-    Accuracy is critical for diagnosis but will require more time to retrieve and validate results. Waiting too much time will make the system unusable in time sensitive situations so latency must be considered. One solution is to include multiple paths for different diagnosis. More complex situations will require more data analysis and time to diagnose while simple cases can use a much smaller and faster LLM for immediate feedback.
-- Privacy vs innovation
-    Privacy is critical in the medical field but requires more complexity to implement. To ensure privacy systems need to limit access and routinely tested for security risks. This takes a considerable amount of resources and can greatly reduce the freedom for innovation. For example every time you want to integrate a new LLM model a privacy assessment will need to be completed before proceeding. In some cases the LLM may not fit the criteria and you will be unable to use it.
-- Open-souce vs Closed-source models
-    Open source provides transparency into how the model weights work and how fine tuning them could change the outcome. This can be beneficial if you have the expertise to fine tune a model. A closed source model doesn't expose the inner workings but is maintained by providers for greater access, performance, and doesn't require expertise to use.
-- Fine tune vs RAG
-- Database selection (Pinecone vs Weaviate): 
-    - Pinecone is fully managed so easier to deploy and performant for real-time applications
-    - Weaviate give more control and GraphQL for better hybrid searching on complex medical data.
+- **Accuracy vs. Latency:**  
+    Achieving high diagnostic accuracy often requires retrieving and processing more data, which can increase response times. However, clinicians need timely feedback, especially in urgent scenarios. To balance this, the system can route simple cases to lightweight, faster LLMs for immediate answers, while reserving more comprehensive retrieval and analysis for complex cases where accuracy is paramount.
+
+- **Privacy vs. Innovation:**  
+    Strict privacy requirements (e.g., HIPAA) are essential in healthcare but can slow down the adoption of new technologies. Every new model or integration must undergo rigorous privacy and security assessments, which can limit experimentation and rapid iteration. While this ensures patient data is protected, it may delay or restrict the use of cutting-edge LLMs or external services.
+
+- **Open-Source vs. Closed-Source Models:**  
+    Open-source models offer transparency and the ability to customize or fine-tune for specific medical domains, which is valuable if in-house expertise is available. However, they require more maintenance and security vetting. Closed-source models, while less transparent, are typically easier to deploy, come with vendor support, and may offer better performance out-of-the-box, but limit customization and insight into model behavior.
+
+- **Fine-Tuning vs. Retrieval-Augmented Generation (RAG):**  
+    Fine-tuning an LLM on medical data can improve accuracy for specific tasks but requires access to high-quality, de-identified datasets and ongoing maintenance. RAG leverages external knowledge bases (like EHRs or medical literature) at inference time, reducing the need for frequent retraining and enabling up-to-date information retrieval. However, RAG systems add complexity and may introduce latency or retrieval errors.
+
+- **Vector Database Selection (Pinecone vs. Weaviate):**  
+    Pinecone is a fully managed service, making it easy to deploy and scale for real-time semantic search, but offers less flexibility for custom queries. Weaviate provides more control, including GraphQL support for hybrid search and advanced filtering, which can be advantageous for complex medical data scenarios, but may require more operational overhead to manage and secure.
