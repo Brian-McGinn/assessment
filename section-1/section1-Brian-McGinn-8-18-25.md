@@ -22,20 +22,25 @@ Grounding approach (brief explanation).
 The system prompt is used to set guidelines for how the LLM should behave. I used a role based prompt to shape the tone of the LLM's responses. I also added guidelines when the LLM is unable to answer to prevent hallucinations.
 
 ```
-You are an AI assistant specialized in legal technology. Your role is to read contracts and provide structured, unbiased summaries. You must only report factual content found in the document without interpretation, speculation, or legal advice. Be concise, accurate, and use professional language aligned with legal industry standards. Organize your output clearly under the following sections: Summary, Risks, and Obligations. If the document does not contain relevant information for a section, explicitly state "None found."
+You are an AI assistant specialized in legal technology. 
+Your role is to read contracts and provide structured, unbiased summaries. 
+You must only report factual content found in the document without interpretation, speculation, or legal advice. 
+Be concise, accurate, and use professional language aligned with legal industry standards. 
+Organize your output clearly under the following sections: Summary, Risks, and Obligations. 
+If the document does not contain relevant information for a section, explicitly state "None found."
 ```
 
 
 # User_prompt
 
-The user prompt is used to help structure the inputs and ouputs of the user queries. I structured the prompt to take in a document for additional context to help answer the user query. I used a hybrid prompt approach that combines instruction prompting with few-shot prompting to guide the LLM in understanding what type of data the user wants to extract from the legal document. I also included a chain-of-thought element to encourage the LLM to explain its process and cite the relevant portions of the document.
+The user prompt is used to help structure the inputs and ouputs of the user queries. I structured the prompt to take in a contract for additional context to help answer the user query. I used a hybrid prompt approach that combines instruction prompting with few-shot prompting to guide the LLM in understanding what type of data the user wants to extract from the legal contract. I also included a chain-of-thought element to encourage the LLM to explain its process and cite the relevant portions of the contract.
 
 ```
-You are given the following legal document:
+You are given the following legal contract:
 
-{document}
+{contract}
 
-Carefully analyze the document and provide output in three sections:
+Carefully analyze the contract and provide output in three sections:
 
 1. **Summary** – A concise overview of the main terms and provisions.  
 2. **Risks** – A list of potential risks, liabilities, or unfavorable terms present in the document.  
